@@ -1,1 +1,4 @@
-This is a Group projetct on c functions
+This is the first ALX collaborative project
+by:
+0. SHAWANA GIDEON
+1. AMARACHUKWU OGBU
