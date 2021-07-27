@@ -1,33 +1,38 @@
 #ifndef HOLBERTON_H
 #define HOLBERTON_H
+
 #include <stdarg.h>
-#include <stdio.h>
+#include <stddef.h>
 #include <stdlib.h>
 #include <unistd.h>
 
-/**
- * struct fmt - function to check for formats
- * @type: The format to print
- * @f: The print function to use
- */
-typedef struct fmt
-{
-	char *type;
-	int (*f)();
-} fmt_t;
-
 int _printf(const char *format, ...);
-int print_op(const char *format, fmt_t *print_arr, va_list list);
-int ch(va_list character);
-int str(va_list string);
-int _int(va_list integ);
-int _ui(va_list unsign);
-int _oct(va_list octo);
-int _rot13(va_list rot);
-int _hex_str(unsigned int n, unsigned int hex, char alpha);
-int _hex_l(va_list hexa);
-int _hex_u(va_list hexa);
-int _strlen(char *s);
-int _bin(va_list bin);
+int print_char(va_list ap);
+int print_str(va_list ap);
 int _putchar(char c);
+int _puts(char *str, int ascii);
+int convert_alpha_numeric(int nb, int upper);
+char *convert_base(unsigned long nb, unsigned int base, int upper);
+int print_percent(va_list ap __attribute__((unused)));
+int print_octal(va_list ap);
+int print_hexa_lower(va_list ap);
+int print_hexa_upper(va_list ap);
+int print_unsigned(va_list ap);
+int print_unsigned_number(unsigned int n);
+int print_ptr(va_list ap);
+char *convert_base_pointer(unsigned long p);
+int print_str_reverse(va_list ap);
+int _strlen_recursion(char *s);
+
+/**
+ *struct func_identifier - struct for identifying funciton
+ *@c: string
+ *@f: pointer to function
+ */
+typedef struct func_identifier
+{
+	char *c;
+	int (*f)(va_list);
+} function_identifier;
+
 #endif
