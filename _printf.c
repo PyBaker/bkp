@@ -1,77 +1,85 @@
 #include "holberton.h"
+#include <stdlib.h>
+
 
 /**
- * get_func - select funciton for conversion
- * @c: char to use for selection
- * Return: pointer to function
+ * check_for_specifiers - checks if there is a valid format specifier
+ * @format: possible format specifier
+ *
+ * Return: pointer to valid function or NULL
  */
-int (*get_func(const char c))(va_list)
+static int (*check_for_specifiers(const char *format))(va_list)
 {
-	int i = 0;
-
-	function_identifier f[] = {
-		{"c", print_char},
-		{"s", print_str},
-		{"%", print_percent},
-		{"u", print_unsigned},
-		{"o", print_octal},
-		{"x", print_hexa_lower},
-		{"X", print_hexa_upper},
-		{"p", print_ptr},
-		{"r", print_str_reverse}
+	unsigned int i;
+	print_t p[] = {
+		{"c", print_c},
+		{"s", print_s},
+		{"i", print_i},
+		{"d", print_d},
+		{"u", print_u},
+		{"b", print_b},
+		{"o", print_o},
+		{"x", print_x},
+		{"X", print_X},
+		{"p", print_p},
+		{"S", print_S},
+		{"r", print_r},
+		{"R", print_R},
+		{NULL, NULL}
 	};
 
-	while (i < 9)
+	for (i = 0; p[i].t != NULL; i++)
 	{
-		if (c == f[i].c[0])
-			return (f[i].f);
-
-		i++;
+		if (*(p[i].t) == *format)
+		{
+			break;
+		}
 	}
-	return (NULL);
+	return (p[i].f);
+
 }
 
 /**
- * _printf - function to perform like printf
- * @format: format string
- * Return: number of characters printed excluding the null byte
+ * _printf - prints anything
+ * @format: list of argument types passed to the function
+ *
+ * Return: number of characters printed
  */
 int _printf(const char *format, ...)
 {
-	int i = 0, sum = 0;
-	int (*function)();
+	unsigned int i = 0, count = 0;
+	va_list valist;
+	int (*f)(va_list);
 
-	va_list ap;
-
-	va_start(ap, format);
-
-	if (!format || (format[0] == '%' && format[1] == '\0'))
+	if (format == NULL)
 		return (-1);
 
+	va_start(valist, format);
 	while (format[i])
 	{
-		if (format[i] == '%')
-		{
-			if (format[i + 1] != '\0')
-				function = get_func(format[i + 1]);
-			if (function == NULL)
-			{
-				_putchar(format[i]);
-				sum++;
-				i++;
-			} else
-			{
-				sum += function(ap);
-				i += 2;
-				continue;
-			}
-		} else
+		for (; format[i] != '%' && format[i]; i++)
 		{
 			_putchar(format[i]);
-			sum++;
-			i++;
+			count++;
 		}
+		if (!format[i])
+			return (count);
+		f = check_for_specifiers(&format[i + 1]);
+		if (f != NULL)
+		{
+			count += f(valist);
+			i += 2;
+			continue;
+		}
+		if (!format[i + 1])
+			return (-1);
+		_putchar(format[i]);
+		count++;
+		if (format[i + 1] == '%')
+			i += 2;
+		else
+			i++;
 	}
-	va_end(ap);
-	return (sum);
+	va_end(valist);
+	return (count);
 }
