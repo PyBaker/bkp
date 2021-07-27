@@ -1,197 +1,63 @@
-PRINTF(3)              Linux Programmer's Manual              PRINTF(3)
+.\" Manpage for _printf borrowed from the actual printf(3) manual page and may contain some unforeseen errors.
+.TH man 8 "23 October 2018" "1.0" "_printf man page"
+.SH NAME
+_printf - format and write a string, character, or integer to stdout
+.SH SYNOPSIS
+#include "holberton.h"
+.br
+#include <stdarg.h>
+.br
+#include <stdlib.h>
+.br
+.br
+int _printf(const char *format, ...)
 
-NAME
-       printf,
+.SH DESCRIPTION
+The function _printf() produces output according to a format as described below. The functions printf() writes output to stdout, the standard output stream.
 
-SYNOPSIS
-       #include <stdio.h>
+.SS Return value
+Upon successful return, these functions return the number of characters
+printed (excluding the null byte used to end output to strings).
 
-       int printf(const char *format, ...);
+If an output error is encountered, a negative value is returned.
 
-       #include <stdarg.h>
+.SS The format string:
+.br
+The format string is a character string, composed of zero or more directives: ordinary characters (not %), which are copied unchanged to the output stream. Each conversion specification is introduced by the character %, and ends with the conversion specifier.
 
-       int vprintf(const char *format, va_list ap);
+.SS The conversion specifiers:
+.br
+A character that specifies the type of conversion to be applied. The conversion specifier and their meanings are:
+.br
+d, i - The int argument is converted to signed decimal notation.
+.br
+c -  The int argument is converted to an unsigned char, and the resulting character is written.
+.br
+s -  The const char * argument is expected to be a pointer to an array of character type (pointer to a string).
 
-
-DESCRIPTION
-       The functions in the printf() family produce output according to
-       a  format  as  described  below.   The  functions  printf()  and
-       vprintf()  write  output  to stdout, the standard output stream;
-       fprintf() and  vfprintf()  write  output  to  the  given  output
-       stream;  sprintf(), snprintf(), vsprintf() and vsnprintf() write
-       to the character string str.
-
-
-
-       The functions vprintf(), vfprintf(), vdprintf(), vsprintf(), vs‐
-       nprintf()  are  equivalent to the functions printf(), fprintf(),
-       dprintf(), sprintf(), snprintf(), respectively, except that they
-       are  called with a va_list instead of a variable number of argu‐
-       ments.  These functions do not call the va_end  macro.   Because
-       they invoke the va_arg macro, the value of ap is undefined after
-       the call.  See stdarg(3).
-
-       All of these functions write the output under the control  of  a
-       format  string that specifies how subsequent arguments (or argu‐
-       ments accessed via the variable-length  argument  facilities  of
-       stdarg(3)) are converted for output.
-
-       C99 and POSIX.1-2001 specify that the results are undefined if a
-       call to sprintf(), snprintf(), vsprintf(), or vsnprintf()  would
-       cause  copying to take place between objects that overlap (e.g.,
-       if the target string array and one of the supplied  input  argu‐
-       ments refer to the same buffer).  See NOTES.
-
-   Format of the format string
-       The format string is a character string, beginning and ending in
-       its initial shift state, if any.  The format string is  composed
-       of  zero  or more directives: ordinary characters (not %), which
-       are copied unchanged to the output stream; and conversion speci‐
-       fications, each of which results in fetching zero or more subse‐
-       quent arguments.  Each conversion specification is introduced by
-       the  character  %, and ends with a conversion specifier.  In be‐
-       tween there may be (in this order) zero or more  flags,  an  op‐
-       tional  minimum  field  width,  an optional precision and an op‐
-       tional length modifier.
-
-       The arguments must correspond properly  (after  type  promotion)
-       with  the  conversion  specifier.  By default, the arguments are
-       used in the order given, where each '*'  (see  Field  width  and
-       Precision below) and each conversion specifier asks for the next
-       argument (and it is an error if  insufficiently  many  arguments
-       are  given).   One can also specify explicitly which argument is
-       taken, at each place where an argument is required,  by  writing
-       "%m$" instead of '%' and "*m$" instead of '*', where the decimal
-       integer m denotes the position in the argument list of  the  de‐
-       sired argument, indexed starting from 1.  Thus,
-
-           printf("%*d", width, num);
-
-       and
-
-           printf("%2$*1$d", width, num);
-
-       are  equivalent.  The second style allows repeated references to
-       the same argument.  The C99 standard does not include the  style
-       using  '$',  which comes from the Single UNIX Specification.  If
-       the style using '$' is used, it must be used throughout for  all
-       conversions taking an argument and all width and precision argu‐
-       ments, but it may be mixed with "%%" formats, which do not  con‐
-       sume  an argument.  There may be no gaps in the numbers of argu‐
-       ments specified using '$'; for example, if arguments 1 and 3 are
-       specified,  argument  2  must also be specified somewhere in the
-       format string.
-
-       For some numeric conversions a radix character ("decimal point")
-       or  thousands' grouping character is used.  The actual character
-       used depends on the LC_NUMERIC part of the locale.  (See  setlo‐
-       cale(3).)   The  POSIX  locale  uses '.' as radix character, and
-       does not have a grouping character.  Thus,
-
-               printf("%'.2f", 1234567.89);
-
-
-   Conversion specifiers
-       A character that specifies the type of conversion to be applied.
-       The conversion specifiers and their meanings are:
-
-       c  print a single character
-       d  print a decimal (base 10) number
-       e  print an exponential floating-point number
-       f  print a floating-point number
-       g  print a general-format floating-point number
-       i  print an integer in base 10
-       o  print a number in octal (base 8)
-       s  print a string of characters
-       u  print an unsigned decimal (base 10) number
-       x  print a number in hexidecimal (base 16)
-       %% print a percent sign (\% also works)
-
-       %  A  '%'  is  written.  No argument is converted.  The com‐
-          plete conversion specification is '%%'.
-
-RETURN VALUE
-       Upon successful return, these functions  return  the  number  of
-       characters  printed  (excluding the null byte used to end output
-       to strings).
-
-       If an output error is encountered, a negative value is returned.
-
-ATTRIBUTES
-       For  an  explanation  of the terms used in this section, see at‐
-       tributes(7).
-
-       ┌────────────────────────┬───────────────┬────────────────┐
-       │Interface               │ Attribute     │ Value          │
-       ├────────────────────────┼───────────────┼────────────────┤
-       │printf(), fprintf(),    │ Thread safety │ MT-Safe locale │
-       │sprintf(), snprintf(),  │               │                │
-       │vprintf(), vfprintf(),  │               │                │
-       │vsprintf(), vsnprintf() │               │                │
-       └────────────────────────┴───────────────┴────────────────┘
-
-CONFORMING TO
-       fprintf(),   printf(),   sprintf(),    vprintf(),    vfprintf(),
-       vsprintf(): POSIX.1-2001, POSIX.1-2008, C89, C99.
-
-       snprintf(), vsnprintf(): POSIX.1-2001, POSIX.1-2008, C99.
-
-       The  dprintf()  and vdprintf() functions were originally GNU ex‐
-       tensions that were later standardized in POSIX.1-2008.
-
-       Concerning the return value of snprintf(), SUSv2 and C99 contra‐
-       dict  each  other:  when  snprintf()  is called with size=0 then
-       SUSv2 stipulates an unspecified return value less than 1,  while
-       C99  allows  str  to  be NULL in this case, and gives the return
-       value (as always) as the number of characters  that  would  have
-       been  written  in  case the output string has been large enough.
-       POSIX.1-2001 and later align their specification  of  snprintf()
-       with C99.
-
-       glibc  2.1  adds length modifiers hh, j, t, and z and conversion
-       characters a and A.
-
-       glibc 2.2 adds the conversion character F  with  C99  semantics,
-       and the flag character I.
-
-NOTES
-       Some programs imprudently rely on code such as the following
-
-           sprintf(buf, "%s some further text", buf);
-
-       to  append  text to buf.  However, the standards explicitly note
-       that the results are undefined if source and destination buffers
-       overlap  when calling sprintf(), snprintf(), vsprintf(), and vs‐
-       nprintf().  Depending on the version of  gcc(1)  used,  and  the
-       compiler options employed, calls such as the above will not pro‐
-       duce the expected results.
-
-       The glibc implementation of the  functions  snprintf()  and  vs‐
-       nprintf()  conforms to the C99 standard, that is, behaves as de‐
-       scribed above, since glibc version 2.1.  Until glibc 2.0.6, they
-       would return -1 when the output was truncated.
-
-BUGS
-       Because  sprintf()  and  vsprintf()  assume  an arbitrarily long
-       string, callers must be  careful  not  to  overflow  the  actual
-       space; this is often impossible to assure.  Note that the length
-       of the strings produced is  locale-dependent  and  difficult  to
-       predict.  Use snprintf() and vsnprintf() instead (or asprintf(3)
-       and vasprintf(3)).
-
-       Code such as printf(foo); often indicates a bug, since  foo  may
-       contain  a % character.  If foo comes from untrusted user input,
-       it may contain %n, causing the printf() call to write to  memory
-       and creating a security hole.
-
-EXAMPLE
-
-
-
-SEE ALSO
-       printf(1)
-
-COLOPHON
-       This page is  part  of an ALX project on the printf function in C
-
-GNU
+.SH EXAMPLE
+.br
+Print a string literal:
+.br
+int a = 0;
+.br
+char *a_string = "cat";
+.br
+a = _printf("test %s\n", a_string);
+.br
+printf("%d\n", a);
+.br
+return (0);
+.br
+.SS General Formatting:
+.br
+_printf("example format string [ % [ (c) (s) (d) (i) ]]", [variable] [string literal)
+.br
+.SH SEE ALSO
+printf(1), asprintf(3), dprintf(3), scanf(3)
+.br
+.SH BUGS
+No known bugs so far.
+.SS COLOPHON
+.br
+This page was borrowed from the actual printf manual page.
